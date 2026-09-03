@@ -1,7 +1,7 @@
 ## 작성원칙
 - 입력자료
   - SR 상세 : SR 분석가가 정리한 SR 요약본을 우선 활용, 없는 경우 ITSM SR 상세를 직접 조회하여 작성
-  - 수정 로직 : ABAP 소스분석가가 zdown 수정 전 · 후 소스를 비교하여 작성한 수정 로직 html — Design Strategy 서술의 근거로 사용
+  - 비교 분석 결과 : ABAP 소스분석가가 zdown 수정 전 · 후 소스를 비교 분석한 결과(차이점 · 비즈니스적 의미) — Design Strategy 서술의 근거로 사용
   - zdown 원본 html(수정 전 · 후) : Selection Screen · 실행화면의 as-is/to-be 비교 근거로 사용. 이 중 수정 후 소스는 Program Source에 그대로 붙여넣는 원본으로도 사용
   - 기존 TD 문서 : 있는 경우 사용자가 알려준 참고파일 경로에서 확보하여 버전업 대상으로 사용, 없는 경우 템플릿 기준으로 신규 작성
 - 수정 전 · 후 zdown 비교 결과가 없으면 Design Strategy 항목을 작성할 수 없고, zdown 수정 후 소스가 없으면 Program Source 항목을 작성할 수 없으므로 작성 진행 불가
