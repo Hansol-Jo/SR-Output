@@ -134,10 +134,10 @@ QA 테스터
 
 ## 프로그램 식별 정보
 FP · FD · TD 등 산출물 파일명 · 셀 값에 공통으로 쓰이는 프로그램 관련 placeholder의 의미와 도출 규칙.
-- {프로그램} : 프로그램 ID / T-code (예: ZSBFMBR0580) — zdown 소스 헤더의 'Program ID' 항목에서 확인
+- {프로그램ID} : 프로그램 ID / T-code (예: ZSBFMBR0580) — zdown 소스 헤더의 'Program ID' 항목에서 확인
 - {프로그램명} : 프로그램 Description (예: [FM] IP 주문실적전표 일괄 취소 프로그램) — zdown 소스 헤더의
   'Description' 항목에서 확인
-- {모듈명} : {프로그램}(Program ID)에서 'Z' 뒤의 알파벳 두 글자로 판별  
+- {모듈명} : {프로그램ID}(Program ID)에서 'Z' 뒤의 알파벳 두 글자로 판별  
   예시 : ZCOBC1180 → 모듈은 'CO'
 
 ## 부서 정보 취득

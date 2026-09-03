@@ -5,8 +5,8 @@
   - zdown 원본 html(수정 전 · 후) : Selection Screen · 실행화면의 as-is/to-be 비교 근거로 사용. 이 중 수정 후 소스는 Program Source에 그대로 붙여넣는 원본으로도 사용
   - 기존 TD 문서 : 있는 경우 사용자가 알려준 참고파일 경로에서 확보하여 버전업 대상으로 사용, 없는 경우 템플릿 기준으로 신규 작성
 - zdown 원본 html(수정 전 · 후)이 없으면 Design Strategy 항목을 작성할 수 없고, zdown 수정 후 소스가 없으면 Program Source 항목을 작성할 수 없으므로 작성 진행 불가
-- 파일명은 'KT_ERP_BTA_TD_{프로그램}_[{모듈명}] {프로그램명}_{현재일자}.doc'으로 할 것
-  ({프로그램}·{프로그램명}·{모듈명}의 정의와 도출 규칙은 AGENTS.md `## 프로그램 식별 정보` 참고)
+- 파일명은 'KT_ERP_BTA_TD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc'으로 할 것
+  ({프로그램ID}·{프로그램명}·{모듈명}의 정의와 도출 규칙은 AGENTS.md `## 프로그램 식별 정보` 참고)
 - 하기의 '수정 세부 사항'을 참고하여 문서를 작성할 것.
 - 문서 업데이트 시 수정이력 Format을 지켜서 작성할 것.
   - 표 내부는 색상 마킹 대상에서 제외하되 내용은 동일하게 수정함. Program Source는 이 색상 기반 수정이력 Format(빨강/검정)을 적용하지 않지만, 별도의 구문 강조 색상(회색 · 파란색 · 검정색)은 적용함 — 자세한 사항은 아래 'Program Source' 항목 참고
@@ -79,7 +79,7 @@
      (예 : zsbfmbr0580_top → zsbfmbr0580_cls → zsbfmbr0580_scr → zsbfmbr0580_o01 → zsbfmbr0580_i01 → zsbfmbr0580_f01 순으로 전체를 그대로 붙여넣음)
 
 ## 완료조건
-- 파일명 규칙('KT_ERP_BTA_TD_{프로그램}_[{모듈명}] {프로그램명}_{현재일자}.doc')을 준수한 산출물 파일이 생성됨
+- 파일명 규칙('KT_ERP_BTA_TD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc')을 준수한 산출물 파일이 생성됨
 - 1페이지(작성일자 · 작성팀 · 작성자), 2페이지 Document Management 표(Version · Date · Author · Comments), Technical Design 개요(Developer · Req. Dev. Date)가 빠짐없이 채워짐
 - 수정 전후 차이가 있는 Design Strategy 항목이 수정이력 Format(색상 규칙)에 맞춰 작성됨
 - 대표 Object가 추가된 경우 Program Object 항목이 작성됨
