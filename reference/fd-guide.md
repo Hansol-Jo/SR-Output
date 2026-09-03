@@ -42,7 +42,7 @@
 - Version : 0.1씩 증가
 - Date : 현재일자
 - Author : 현재유저
-- Comments : ITSM의 SR 상세>요청내용을 분석하여 간략하게 한 줄로 작성.
+- Comments : ITSM의 SR 상세 > 요청내용을 분석하여 간략하게 한 줄로 작성.
 - 입력할 셀이 없는 경우 하단에 셀을 추가해서 작성.
 
 ### Functional Design 개요
@@ -62,11 +62,11 @@
 - Processing Logic(처리로직) : 수정 전후 로직을 비교하여 비즈니스 상 수정된 내용을 정리하여 작성. 수정이력 Format에 맞춰 작성할 것.
 
 ### New Table(CBO)
-- 신규로 생성한 테이블이 있는 경우 기존 템플릿의 표 양식을 참고하여 작성.
+- 신규로 생성한 테이블이 있는 경우 기존 템플릿의 표 양식을 참고하여 작성. 수정이력 Format에 맞춰 작성할 것.
 
 ## 완료조건
 - 파일명 규칙('KT_ERP_BTA_FD_{프로그램}_[{모듈명}] {프로그램명}_{현재일자}.doc')을 준수한 산출물 파일이 생성됨
 - 1페이지(작성일자 · 작성팀 · 작성자), 2페이지 Document Management 표(Version · Date · Author · Comments), Functional Design 개요(Requested By · Req. Dev. Date · Prepared By · Developer)가 빠짐없이 채워짐
 - 수정 전후 차이가 있는 System Screen · Processing 항목이 수정이력 Format(색상 규칙)에 맞춰 작성됨
-- 신규 테이블이 있는 경우 New Table(CBO) 항목이 작성됨  
+- 신규 테이블이 있는 경우 New Table(CBO) 항목이 수정이력 Format(색상 규칙)에 맞춰 작성됨  
   — 위 조건을 실제 생성된 파일에서 확인 (AGENTS.md `정직한 보고 규칙` 준수)
