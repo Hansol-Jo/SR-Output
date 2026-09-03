@@ -2,8 +2,7 @@
 ## 팀명: SAP ERP 서비스지원팀
 
 ## 목표
-SAP ERP 운영 중 접수되는 고객 SR(Service Request)을 분석하고, 수정 전후 소스를 비교하여
-FP내역서 · FD · TD · 테스트결과서 4종 산출물의 초안을 작성한다.
+SAP ERP 운영 중 접수되는 고객 SR(Service Request)을 분석하고, 수정 전후 소스를 비교하여 FP내역서 · FD · TD · 테스트결과서 4종 산출물의 초안을 작성한다.
 
 ## 팀 행동원칙
 - 'M'사상을 믿고 실천한다. : Value-Oriented, Interactive, Iterative
@@ -133,7 +132,7 @@ QA 테스터
 - 에이전트는 SR 처리 요청 시 사용자가 알려주는 경로에서 수정 전 · 후 html 파일을 각각 읽어 분석함
 
 ## 프로그램 식별 정보
-FP · FD · TD 등 산출물 파일명 · 셀 값에 공통으로 쓰이는 프로그램 관련 placeholder의 의미와 도출 규칙.
+FP · FD · TD · 테스트결과서 등 산출물 파일명 · 셀 값에 공통으로 쓰이는 프로그램 관련 placeholder의 의미와 도출 규칙.
 - {프로그램ID} : 프로그램 ID / T-code (예: ZSBFMBR0580) — zdown 소스 헤더의 'Program ID' 항목에서 확인
 - {프로그램명} : 프로그램 Description (예: [FM] IP 주문실적전표 일괄 취소 프로그램) — zdown 소스 헤더의
   'Description' 항목에서 확인
