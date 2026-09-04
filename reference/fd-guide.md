@@ -6,7 +6,7 @@
     Selection Screen · 실행화면의 as-is/to-be 비교 근거로 사용
   - 기존 FD 문서 : prep 폴더에 있는 경우 버전업 대상으로 사용, 없는 경우 `template` 폴더의 FD 템플릿('KT_ERP_BTA_FD_ZSBFMBR0580_[FM] IP 주문실적전표 일괄 취소 프로그램_20260807.doc')
     파일 기준으로 신규 작성 (prep 폴더와 template 폴더는 서로 다른 별개의 파일임 — AGENTS.md
-    `## Prep 폴더 취득`·`## 템플릿 파일 취득` 참고)
+    `## prep 폴더 취득`·`## 템플릿 파일 취득` 참고)
 - zdown 원본 html(수정 전 · 후)이 없으면 System Screen 항목을, 비교 분석 결과가 없으면 Processing 항목을 작성할 수 없으므로 작성 진행 불가
 - 파일명은 'KT_ERP_BTA_FD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc'으로 할 것
   ({프로그램ID}·{프로그램명}·{모듈명}의 정의와 도출 규칙은 AGENTS.md `## 프로그램 식별 정보` 참고)
