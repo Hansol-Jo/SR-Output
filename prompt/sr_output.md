@@ -1,8 +1,7 @@
-- 받아야 할 정보 : SR 번호, 계정정보, 참고파일경로
-- 참고파일 : FD, TD, 수정전 zdown html, 수정후 zdown html
+- 사용자에게 받아야 할 정보 : SR 번호
+- prep : FD(선택), TD(선택), 수정전 zdown html(필수), 수정후 zdown html(필수)
 - FD, TD는 버전업해서 작성, 없는 경우 새로 작성
 - 로직 수정 전후를 비교하여 FP, FD, TD, 테스트결과서를 작성
-- 수정전후 zdown html이 없는 경우 진행불가
 
 
 
