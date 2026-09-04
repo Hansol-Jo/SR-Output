@@ -2,7 +2,7 @@
 - 입력자료
   - SR 상세 : SR 분석가가 정리한 SR 요약본을 우선 활용, 없는 경우 ITSM SR 상세를 직접 조회하여 작성
   - 비교 분석 결과 : ABAP 소스분석가가 zdown 수정 전 · 후 소스를 비교 분석한 결과(차이점 · 비즈니스적 의미) — Design Strategy 서술의 근거로 사용
-  - zdown 원본 html(수정 전 · 후) : Prep 폴더에서 확보 (AGENTS.md `## Prep 폴더 취득` 참고) —
+  - zdown 원본 html(수정 전 · 후) : Prep 폴더에서 확보 (AGENTS.md `## prep 폴더 취득` 참고) —
     Selection Screen · 실행화면의 as-is/to-be 비교 근거로 사용. 이 중 수정 후 소스는 Program Source에
     그대로 붙여넣는 원본으로도 사용
   - 기존 TD 문서 : prep 폴더에 있는 경우 버전업 대상으로 사용, 없는 경우 `template` 폴더의 TD 템플릿(KT_ERP_BTA_TD_ZSBFMBR0580_[FM] IP 주문실적전표 일괄 취소 프로그램_20260807.doc)
