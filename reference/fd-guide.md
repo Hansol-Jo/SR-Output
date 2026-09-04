@@ -69,7 +69,7 @@
 - 신규로 생성한 테이블이 있는 경우 기존 템플릿의 표 양식을 참고하여 작성. 수정이력 Format에 맞춰 작성할 것.
 
 ## 완료조건
-- 파일명 규칙('KT_ERP_BTA_FD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc')을 준수한 산출물 파일이 생성됨
+- 파일명 규칙('KT_ERP_BTA_FD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc')을 준수한 산출물 파일이 `result/{SR NO}/` 폴더에 저장됨 (AGENTS.md `## 산출물 저장 위치` 참고)
 - 1페이지(작성일자 · 작성팀 · 작성자), 2페이지 Document Management 표(Version · Date · Author · Comments), Functional Design 개요(Requested By · Req. Dev. Date · Prepared By · Developer)가 빠짐없이 채워짐
 - 수정 전후 차이가 있는 System Screen · Processing 항목이 수정이력 Format(색상 규칙)에 맞춰 작성됨
 - 신규 테이블이 있는 경우 New Table(CBO) 항목이 수정이력 Format(색상 규칙)에 맞춰 작성됨  

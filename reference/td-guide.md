@@ -87,7 +87,7 @@
      (예 : zsbfmbr0580_top → zsbfmbr0580_cls → zsbfmbr0580_scr → zsbfmbr0580_o01 → zsbfmbr0580_i01 → zsbfmbr0580_f01 순으로 전체를 그대로 붙여넣음)
 
 ## 완료조건
-- 파일명 규칙('KT_ERP_BTA_TD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc')을 준수한 산출물 파일이 생성됨
+- 파일명 규칙('KT_ERP_BTA_TD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc')을 준수한 산출물 파일이 `result/{SR NO}/` 폴더에 저장됨 (AGENTS.md `## 산출물 저장 위치` 참고)
 - 1페이지(작성일자 · 작성팀 · 작성자), 2페이지 Document Management 표(Version · Date · Author · Comments), Technical Design 개요(Developer · Req. Dev. Date)가 빠짐없이 채워짐
 - 수정 전후 차이가 있는 Design Strategy 항목이 수정이력 Format(색상 규칙)에 맞춰 작성됨
 - 대표 Object가 추가된 경우 Program Object 항목이 작성됨
