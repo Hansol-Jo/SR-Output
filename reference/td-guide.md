@@ -2,10 +2,12 @@
 - 입력자료
   - SR 상세 : SR 분석가가 정리한 SR 요약본을 우선 활용, 없는 경우 ITSM SR 상세를 직접 조회하여 작성
   - 비교 분석 결과 : ABAP 소스분석가가 zdown 수정 전 · 후 소스를 비교 분석한 결과(차이점 · 비즈니스적 의미) — Design Strategy 서술의 근거로 사용
-  - zdown 원본 html(수정 전 · 후) : Selection Screen · 실행화면의 as-is/to-be 비교 근거로 사용. 이 중 수정 후 소스는 Program Source에 그대로 붙여넣는 원본으로도 사용
-  - 기존 TD 문서 : 있는 경우 사용자가 알려준 참고파일 경로에서 확보하여 버전업 대상으로 사용, 없는 경우
-    `template` 폴더의 TD 템플릿 파일 기준으로 신규 작성 (템플릿 파일과 기존 TD 문서는 서로 다른 별개의
-    파일임 — AGENTS.md `## 템플릿 파일 취득` 참고)
+  - zdown 원본 html(수정 전 · 후) : Prep 폴더에서 확보 (AGENTS.md `## Prep 폴더 취득` 참고) —
+    Selection Screen · 실행화면의 as-is/to-be 비교 근거로 사용. 이 중 수정 후 소스는 Program Source에
+    그대로 붙여넣는 원본으로도 사용
+  - 기존 TD 문서 : Prep 폴더에 있는 경우 버전업 대상으로 사용, 없는 경우 `template` 폴더의 TD 템플릿
+    파일 기준으로 신규 작성 (Prep 폴더와 template 폴더는 서로 다른 별개의 파일임 — AGENTS.md
+    `## Prep 폴더 취득`·`## 템플릿 파일 취득` 참고)
 - zdown 원본 html(수정 전 · 후)이 없으면 Design Strategy 항목을 작성할 수 없고, zdown 수정 후 소스가 없으면 Program Source 항목을 작성할 수 없으므로 작성 진행 불가
 - 파일명은 'KT_ERP_BTA_TD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc'으로 할 것
   ({프로그램ID}·{프로그램명}·{모듈명}의 정의와 도출 규칙은 AGENTS.md `## 프로그램 식별 정보` 참고)
