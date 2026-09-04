@@ -5,9 +5,9 @@
   - zdown 원본 html(수정 전 · 후) : Prep 폴더에서 확보 (AGENTS.md `## Prep 폴더 취득` 참고) —
     Selection Screen · 실행화면의 as-is/to-be 비교 근거로 사용. 이 중 수정 후 소스는 Program Source에
     그대로 붙여넣는 원본으로도 사용
-  - 기존 TD 문서 : Prep 폴더에 있는 경우 버전업 대상으로 사용, 없는 경우 `template` 폴더의 TD 템플릿
-    파일 기준으로 신규 작성 (Prep 폴더와 template 폴더는 서로 다른 별개의 파일임 — AGENTS.md
-    `## Prep 폴더 취득`·`## 템플릿 파일 취득` 참고)
+  - 기존 TD 문서 : prep 폴더에 있는 경우 버전업 대상으로 사용, 없는 경우 `template` 폴더의 TD 템플릿(KT_ERP_BTA_TD_ZSBFMBR0580_[FM] IP 주문실적전표 일괄 취소 프로그램_20260807.doc)
+    파일 기준으로 신규 작성 (prep 폴더와 template 폴더는 서로 다른 별개의 파일임 — AGENTS.md
+    `## prep 폴더 취득`·`## 템플릿 파일 취득` 참고)
 - zdown 원본 html(수정 전 · 후)이 없으면 Design Strategy 항목을 작성할 수 없고, zdown 수정 후 소스가 없으면 Program Source 항목을 작성할 수 없으므로 작성 진행 불가
 - 파일명은 'KT_ERP_BTA_TD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc'으로 할 것
   ({프로그램ID}·{프로그램명}·{모듈명}의 정의와 도출 규칙은 AGENTS.md `## 프로그램 식별 정보` 참고)
