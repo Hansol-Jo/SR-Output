@@ -224,6 +224,11 @@ Word 파일 작성 시 `reference/td-guide.md`를 반드시 준수할 것.
 - [MED] Word Range.Text 에는 `.Replace([char]13, '')` 사용 불가 — null 문자 (\x0007) 가 섞여 있어 Replace 대상이 빈 문자열로 처리됨. `-replace` 연산자 사용. 출처: SRM26062606398 산출물 작성
 - [HIGH] HTML 파일 읽기 시 한꺼번에 많은 파일을 읽으면 오류 발생 — fewer batch 방식으로 나누어 읽을 것. 모든 HTML 파일을 완전히 읽은 후에만 산출물 작성을 시작할 것. 파일을 모두 읽지 않고 산출물 작성을 시작하면 차이점을 놓칠 수 있음. 출처: SRM26062606398 산출물 작성
 - [HIGH] Excel COM 자동화 후 반드시 Quit() + GC.Collect() 호출할 것 — PowerShell에서 `New-Object -ComObject Excel.Application`으로 엑셀을 생성한 후 `Quit()`과 `[GC]::Collect()`로 명시적으로 종료하지 않으면 백그라운드 프로세스가 살아남아 파일을 잠근다. 출처: SRM26072130592 FP내역서 생성
+- [HIGH] TD/FD 버전업 자동화(PowerShell + Word COM) 시 다음을 반드시 준수할 것:
+  1. **.ps1 파일은 UTF-8 with BOM으로 저장** — BOM 없는 UTF-8은 Windows PowerShell 5.1이 시스템 로케일(CP949 등)로 오인식해 스크립트에 포함된 한글 문자열(파일 경로 · 파일명 등)이 깨짐(mojibake). 깨진 문자에 Windows 경로에 쓸 수 없는 문자가 섞여 `Copy-Item` 등에서 "Illegal characters in path" 오류로 이어짐 (실제 사례: 파일명이 `KT_ERP_BTA_TD_ZSBFMBR0070_[FM]窯꾤츞 議곗젙 ?좎껌?...`처럼 깨짐)
+  2. **가능하면 PowerShell 대신 Python을 직접 호출** — `python.exe script.py` 방식이 경로 인코딩 처리가 더 안정적이므로 우선 고려
+  3. **각 단계 실행 후 성공 여부를 확인하고 실패 시 즉시 중단** — `$ErrorActionPreference = 'Stop'` + try/catch 사용. `Copy-Item` 실패를 감지하지 못한 채 다음 단계(Word로 문서 열기)를 그대로 진행하면 존재하지 않거나 손상된 파일을 열어 빈 문서(0 paragraphs)가 만들어지는 등 실패가 연쇄되고, 이 상태로 재시도를 반복하면 무한루프로 이어짐
+  출처: SRM26072130592 TD 산출물 작성
 - [HIGH] zdown 수정 전후 HTML 파일 비교 시 다음 절차를 반드시 준수할 것:
   1. **전체 라인 수 먼저 확인** — BEFORE/AFTER 각 파일의 `<pre>`~`</pre>` 사이 순수 ABAP 코드(HTML 태그 제거, 빈 줄 제거 후) 라인 수를 비교. 라인 수가 다르면 라인 시프트 발생 가능성 100% → 단순 diff 결과만 믿지 말고 전체 로직 차이 확인 필요
   2. **라인 시프트 발생 시 수동 추출** — HTML 태그(`<font>`, `<br>`, 들여쓰기 등) 제거 후 빈 줄 제거해도 라인 수 다르면, BEFORE의 불필요한 빈 줄이 AFTER에 없어서 전체 라인이 밀림. 라인 번호가 무의미해지므로 diff 결과의 라인 번호를 믿지 말고, 실제 코드 변경이 시작된 지점(주석 `[U04]` 등)을 수동으로 찾아 변경 로직만 추출
