@@ -5,12 +5,14 @@
   - zdown 원본 html(수정 전 · 후) : prep 폴더에서 확보 (AGENTS.md `## prep 폴더 취득` 참고) — Selection Screen · 실행화면의 as-is/to-be 비교 근거로 사용. 이 중 수정 후 소스는 Program Source에 그대로 붙여넣는 원본으로도 사용
   - 기존 TD 문서 : prep 폴더에 있는 경우 버전업 대상으로 사용, 없는 경우 `template` 폴더의 TD 템플릿(KT_ERP_BTA_TD_ZSBFMBR0580_[FM] IP 주문실적전표 일괄 취소 프로그램_20260807.doc)
     파일 기준으로 신규 작성 (prep 폴더와 template 폴더는 서로 다른 별개의 파일임 — AGENTS.md `## prep 폴더 취득`·`## 템플릿 파일 취득` 참고)
+    - **버전업 대상은 `.doc`만 사용** — TD의 `.docx`는 DRM(RMS/IRM) 암호화 문서일 가능성이 높고 DRM 문서는 자동 저장이 구조적으로 불가(AGENTS.md `## prep 폴더 취득` 확장자 규칙·`## Lessons Learned` 참고). `.docx`만 있으면 사용자에게 Word '다른 이름으로 저장'으로 `.doc` 복제본 준비를 요청하고 그 복제본을 버전업 대상으로 사용
 - zdown 원본 html(수정 전 · 후)이 없으면 Design Strategy 항목을 작성할 수 없고, zdown 수정 후 소스가 없으면 Program Source 항목을 작성할 수 없으므로 작성 진행 불가
-- 파일명은 'KT_ERP_BTA_TD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc'으로 할 것
+- 파일명은 'KT_ERP_BTA_TD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}'으로 할 것
+- 파일확장자는 **`.doc`로 통일** — 버전업 대상(기존 TD)도 `.doc`만 사용. `.docx` TD는 DRM 암호화 가능성이 높아 자동 저장 불가(위 '입력자료' 및 AGENTS.md `## prep 폴더 취득` 참고). template 기준 신규 작성도 `.doc`. 산출물 내부 포맷(Word 97-2003)과 확장자를 일치시켜 확장자-포맷 불일치 문서가 생기지 않도록 함
 - {프로그램ID}·{프로그램명}·{모듈명}·{현재유저}의 정의와 도출 규칙은 AGENTS.md `## 프로그램 식별 정보` 참고
 - 하기의 '수정 세부 사항'을 참고하여 문서를 작성할 것.
 - 문서 업데이트 시 수정이력 Format을 지켜서 작성할 것.
-  - 표 내부는 색상 마킹 대상에서 제외하되 내용은 동일하게 수정함. Program Source는 이 색상 기반 수정이력 Format(빨강/검정)을 적용하지 않지만, 별도의 구문 강조 색상(회색 · 파란색 · 검정색)은 적용함 — 자세한 사항은 아래 'Program Source' 항목 참고
+  - 표 내부는 색상 마킹 대상에서 제외하되 내용은 동일하게 수정함. Program Source는 이 색상 기반 수정이력 Format(빨강/검정)을 적용하지 않지만, 별도의 구문 강조 색상(주석 회색 · 일반 코드 검정색 2색)은 적용함 — 자세한 사항은 아래 'Program Source' 항목 참고
 - 수정이력 Format (1페이지 ~ Program Object까지 적용, Program Source는 제외)
   Start of {현재일자} [{SR NO}]   -> 글자색 빨간색
   {수정사항 입력}                  -> 글자색 검정색
@@ -29,14 +31,21 @@
 
 ## 편집 방법(.doc 파일)
 - 템플릿은 Microsoft Word 97-2003 문서(.doc, 바이너리 포맷)이므로 python-docx 등 OOXML(.docx) 기반 라이브러리로는 직접 편집 불가
-- Program Source의 ABAP 토큰 분류에는 `Pygments` 라이브러리가 필요함 (설치되어 있지 않으면 `pip install pygments`로 설치)
-- 실행 환경(Windows + MS Word 설치됨)을 활용하여 pywin32(`win32com.client`)로 Word 애플리케이션을 직접 자동화하여 편집할 것
-  - Word 애플리케이션을 백그라운드로 실행(`Application.Visible = False`)한 뒤 대상 파일을 염 (`Documents.Open`)
+- **Python은 이 환경에서 사용 불가** — `python`은 Microsoft Store 스텁(exit 9009)이고 `pip` · `py` · `conda`가 없어 Pygments · pywin32 등 어떤 라이브러리도 설치·실행 불가. Windows PowerShell 5.1 + Word COM(`New-Object -ComObject Word.Application`)만 사용할 것
+- 실행 환경(Windows + MS Word 설치됨)을 활용하여 Word COM으로 Word 애플리케이션을 직접 자동화하여 편집할 것
+  - Open 전 `DisplayAlerts = 0` · `AutomationSecurity = 3` · `Visible = $true` 설정 — 저장 시 뜨는 대화상자가 COM 자동화에서 응답받지 못해 무한 대기하는 것을 방지 (TD 원본에서 실증: 미설정 시 SaveAs/SaveAs2/SaveCopyAs 모두 120초+ 무한 대기)
   - 텍스트 삽입 · 수정은 Range/Find 객체로 수행
-  - 수정이력 Format(1페이지 ~ Program Object)의 색상 지정 시 RGB 값을 직접 계산하지 말고 `win32com.client.constants`의 `wdColorRed` · `wdColorBlack` 상수를 `Font.Color`에 사용할 것
-  - Program Source의 구문 색상 (주석 · 키워드 · 일반 코드) 은 아래 'Program Source' 항목에서 정한 고정 RGB 값 (회색 · 파란색 · 검정색) 을 사용하며, 이 값들도 RGB → BGR 변환 후 `Font.Color`에 지정할 것 — 변환 공식은 `bgr = (blue << 16) | (green << 8) | red` (Word 의 `Font.Color` 는 0x00BBGGRR 형태의 정수이므로, RGB 순서를 그대로 넣으면 색이 뒤바뀜)
-  - 저장 시 파일 형식을 반드시 원본과 동일한 Word 97-2003(`wdFormatDocument97`)으로 지정하여 `SaveAs`할 것 — 형식을 지정하지 않으면 다른 포맷(.docx 등)으로 저장될 수 있음
-  - 편집이 실패하더라도 Word 프로세스가 잔류하지 않도록 try/finally 구조로 문서 `Close`, 애플리케이션 `Quit`을 반드시 호출할 것
+  - 수정이력 Format(1페이지 ~ Program Object)의 색상 지정 시 RGB 값을 직접 계산하지 말고 Word 상수(`wdColorRed` = 255, `wdColorBlack` = 0)를 `Font.Color`에 사용할 것
+  - Program Source의 구문 색상 (주석 · 일반 코드) 은 아래 'Program Source' 항목에서 정한 고정 RGB 값 (회색 · 검정색) 을 사용하며, 이 값들도 RGB → BGR 변환 후 `Font.Color`에 지정할 것 — 변환 공식은 `bgr = (blue << 16) | (green << 8) | red` (Word 의 `Font.Color` 는 0x00BBGGRR 형태의 정수이므로, RGB 순서를 그대로 넣으면 색이 뒤바뀜)
+  - 저장 시 파일 형식을 반드시 원본과 동일한 Word 97-2003(`wdFormatDocument97` = 0)으로 지정하여 `SaveAs`할 것 — 형식을 지정하지 않으면 다른 포맷(.docx 등)으로 저장될 수 있음
+  - **저장 사전 게이트(필수)**: 편집 전에 무수정 복사본을 `.temp`에 SaveAs(포맷 0)하여 60초 내 저장 성공을 확인할 것. 실패 시 편집 시도 금지 — 손상본이 `result`에 남지 않게 원본 복사본 상태를 유지하고 중단 보고
+  - **DRM 암호화 문서 판정(사전 게이트 실패 시 필수 확인)**: 파일 첫 64KB를 UTF16LE 문자열로 디코딩해 `DRMEncryptedDataSpace` · `DRMEncryptedTransform` · `EncryptedPackage` 스트림명이 있으면 RMS/IRM 보호 문서로, 자동 저장이 구조적으로 불가하다(열람만 가능). 이 판정 시 자동화 재시도 금지 — 사용자가 Word에서 '다른 이름으로 저장'으로 DRM이 제거된 복제본을 prep 폴더에 준비한 후에만 진행. 확인 예: `[System.Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes($path)[0..65535]) -match 'DRMEncrypted'`
+  - 확장자와 실제 포맷이 불일치하는 문서 존재(.docx인데 OLE 바이너리 `D0 CF 11 E0`) — Open 전 파일 첫 4바이트로 실제 포맷 확인. 이 경우 최종 파일명은 관례상 확장자를 유지하되 내부 포맷은 실제 포맷(포맷 0)으로 저장
+  - 편집이 실패하더라도 Word 프로세스가 잔류하지 않도록 try/finally 구조로 문서 `Close`, 애플리케이션 `Quit` + `[GC]::Collect()`를 반드시 호출할 것
+- `.ps1` 스크립트는 ASCII 문자만 사용하고 한글 텍스트(파일명 · 내용)는 UTF-8 JSON 파일로 분리할 것 — 한글 주석 포함 시 UTF-8 BOM 문제(mojibake)로 경로 오류 발생
+- 대괄호 `[ ]`가 들어간 파일명은 `Copy-Item`/`Move-Item`에 `-LiteralPath`를 사용하고, .NET API는 `[IO.File]` 메서드를 사용할 것
+- zdown html 소스는 CP949(EUC-KR) 인코딩 — `[System.Text.Encoding]::GetEncoding(949)`로 디코딩 후 사용할 것
+- 산출물 4종 병렬 생성 시 Word COM 스크립트(FD · TD) 동시 실행 금지 — 실행 전 `Get-Process WINWORD` 잔류 0 확인 후 단독 실행
 
 ### ⚠️ HTML 파일 읽기 주의
 - zdown 소스 html 파일을 읽을 때 한꺼번에 많은 파일을 읽으면 오류 발생
@@ -129,13 +138,12 @@
   기존에 있던 소스 전체를 삭제하고 이번 SR의 수정 후 소스로 완전히 교체함. 기존 소스 뒤에 이어붙이거나
   기존 소스를 남겨둔 채 추가하지 않음
 - 프로그램의 Source 전체를 수정 · 삭제 없이 원문 그대로 붙여넣는 파트임. 로직을 비교하거나 변경 지점을 판단 · 마킹하는 작업이 아니라 zdown 수정 후 html의 소스를 그대로 복사하는 작업임
-- Word 문서에는 SAP GUI ABAP 에디터와 동일한 구문 강조 색상을 적용함 : 주석 = 회색(RGB 128,128,128), 키워드 = 파란색(RGB 0,0,255), 그 외 일반 코드 = 검정색(RGB 0,0,0)
+- Word 문서에는 다음 2색 색상만 적용함 : 주석(`"` 로 시작하는 라인) = 회색(RGB 128,128,128), 그 외 전체 = 검정색(RGB 0,0,0)
+  - **키워드 구문강화(파란색)는 적용하지 않음** — Pygments 대체로 키워드 사전 규칙 분류를 쓰면 문자열 안의 키워드(`lv_msg = 'SELECT 결과 없음'`의 SELECT)까지 오탐해 잘못 강조됨. 틀린 강조는 무강화보다 해로우므로 키워드 강조를 폐기하고 주석 구분만 적용
   - zdown html 자체의 색상(주석 = 파란색, 로직 = 검정색 2색)은 이 목적에 맞지 않으므로 참고하지 않음
     — html에서는 순수 텍스트(소스 코드)만 추출해서 사용함
-  - 주석 · 키워드 판별은 임의로 판단하지 말고 Python `Pygments` 라이브러리의 ABAP 렉서를 사용함  
-    (`from pygments.lexers import get_lexer_by_name` → `get_lexer_by_name('abap')`로 토큰화)
-  - 토큰화 결과에서 `Token.Comment` 계열은 주석(회색), `Token.Keyword` 계열은 키워드(파란색), 나머지 토큰(변수명 · 리터럴 · 연산자 · 공백 등)은 일반 코드(검정색)로 분류
-  - Word Range를 토큰 단위로 나누어 텍스트를 삽입하고, 각 Range의 `Font.Color`를 위 분류에 맞는 RGB 값으로 지정 (RGB → BGR 변환 필요 — 자세한 계산법은 아래 '편집 방법' 참고)
+  - 주석 판별: ABAP 주석은 라인 앞쪽의 `"` 하나로 명확히 구분되므로, 각 라인의 첫 비공백 문자가 `"`이면 해당 라인을 회색으로 처리 (문자열 오탐 없음)
+  - Word Range를 라인 단위로 나누어 텍스트를 삽입하고, 주석 라인의 `Font.Color`만 회색 RGB로 지정 (RGB → BGR 변환 필요 — 자세한 계산법은 위 '편집 방법' 참고)
   - Program Source 전체에 고정폭 글꼴(예: Courier New)을 적용하여 원본 SAP 소스의 들여쓰기 · 정렬이 유지되도록 함
 - 붙여넣는 순서
   1. 메인 소스 : REPORT 선언부 — SE80에서 프로그램을 더블클릭하면 바로 보이는 최상위 소스
@@ -144,12 +152,12 @@
      (예 : zsbfmbr0580_top → zsbfmbr0580_cls → zsbfmbr0580_scr → zsbfmbr0580_o01 → zsbfmbr0580_i01 → zsbfmbr0580_f01 순으로 전체를 그대로 붙여넣음)
 
 ## 완료조건
-- 파일명 규칙('KT_ERP_BTA_TD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc')을 준수한 산출물 파일이 `result/{SR NO}/` 폴더에 저장됨 (AGENTS.md `## 산출물 저장 위치` 참고)
+- 파일명 규칙('KT_ERP_BTA_TD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc', 확장자 `.doc` 통일)을 준수한 산출물 파일이 `result/{SR NO}/` 폴더에 저장됨 (AGENTS.md `## 산출물 저장 위치` 참고)
 - 1페이지(작성일자 · 작성팀 · 작성자), 2페이지 Document Management 표(Version · Date · Author · Comments), Technical Design 개요(Developer · Req. Dev. Date)가 빠짐없이 채워짐
 - 수정 전후 차이가 있는 Design Strategy 항목이 수정이력 Format(색상 규칙)에 맞춰 작성됨
 - 대표 Object가 추가된 경우 Program Object 항목이 작성됨
 - Program Source에 이번 SR의 수정 후 소스(메인 소스 + 나열된 모든 INCLUDE, 순서대로)만 포함되고,
   버전업 이전에 있던 직전 버전의 소스는 남아있지 않음 (소스 내 기존 주석 · 이력 표는 그대로 유지되고
   별도로 가공되지 않음)
-- Program Source의 주석(회색) · 키워드(파란색) · 일반 코드(검정색)가 Pygments ABAP 렉서 기준으로 구분되어 표시됨  
-  — 위 조건을 실제 생성된 파일에서 확인 (AGENTS.md `정직한 보고 규칙` 준수)
+- Program Source의 주석(회색) · 일반 코드(검정색) 2색이 라인 단위 주석 판별(`"` 시작 라인) 기준으로 구분되어 표시됨  
+  — 키워드 파란색 강조는 없음 (위 'Program Source' 항목의 구문강화 폐기 사유 참고). 위 조건을 실제 생성된 파일에서 확인 (AGENTS.md `정직한 보고 규칙` 준수)
