@@ -122,7 +122,7 @@ QA 테스터
 ## SR 정보 취득
 - 담당: SR 분석가 (`## SR 처리 워크플로우` 1단계)
 - SR 정보는 ITSM 웹사이트(http://itsm.ktds.co.kr/oper/servicerequest/list.do?selectedMnuID=OPR00017\&brdOid=0\&mnuIndex=1\&isFirst=true)에서 취득
-- 계정정보 : ID 82314930, PW Whgksthf147@
+- 계정정보 : 'D:\workspace\DevAI\projects\sr-agent\prep\itsm_user.md' 에서 취득
 - 서비스운영현황 > 변경/데이터관련요청 > SR 목록에서 검색 가능
 
 ## prep 폴더 취득
