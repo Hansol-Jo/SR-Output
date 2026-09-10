@@ -18,6 +18,16 @@
 - 원본 문서는 수정 금지.
 - 위의 수정사항 이외의 계산식 및 열너비, 셀병합 등의 레이아웃 절대 변경 금지  
 
+## 편집 방법(.xlsx 파일)
+- **Python은 이 환경에서 사용 불가** — `python`은 Microsoft Store 스텁(exit 9009)이고 `pip` · `py` · `conda`가 없어 openpyxl 등 어떤 라이브러리도 설치·실행 불가. Windows PowerShell 5.1 + Excel COM(`New-Object -ComObject Excel.Application`)만 사용할 것
+- Open 전 `DisplayAlerts = $false` · `Visible = $true` 설정 — 저장 시 뜨는 대화상자가 COM 자동화에서 응답받지 못해 무한 대기하는 것을 방지
+- 셀 수정은 `Range("C3").Value2 = ...` 형태로 수행 (계산식 셀은 절대 건드리지 않음)
+- 저장 시 `SaveAs`에 파일 경로와 포맷을 지정 (`xlOpenXMLWorkbook` = 51)
+- 편집이 실패하더라도 Excel 프로세스가 잔류하지 않도록 try/finally 구조로 워크북 `Close`, 애플리케이션 `Quit` + `[GC]::Collect()`를 반드시 호출할 것 — 미종료 시 백그라운드 프로세스가 파일을 잠금
+- `.ps1` 스크립트는 ASCII 문자만 사용하고 한글 텍스트(파일명 · 내용)는 UTF-8 JSON 파일로 분리할 것
+- 대괄호 `[ ]`가 들어간 파일명은 `Copy-Item`/`Move-Item`에 `-LiteralPath`를 사용하고, .NET API는 `[IO.File]` 메서드를 사용할 것
+- 산출물 4종 병렬 생성 시 Excel COM 스크립트(FP · 테스트결과서) 동시 실행 금지 — 실행 전 `Get-Process EXCEL` 잔류 0 확인 후 단독 실행
+
 ## 수정 세부 사항
 
 ### 0. SR 정보 및 동료검토 정보
