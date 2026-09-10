@@ -6,7 +6,8 @@
   - 기존 FD 문서 : prep 폴더에 있는 경우 버전업 대상으로 사용, 없는 경우 `template` 폴더의 FD 템플릿('KT_ERP_BTA_FD_ZSBFMBR0580_[FM] IP 주문실적전표 일괄 취소 프로그램_20260807.doc')  파일 기준으로 신규 작성 
   - prep 폴더와 template 폴더는 서로 다른 별개의 파일임 — AGENTS.md `## prep 폴더 취득`·`## 템플릿 파일 취득` 참고
 - zdown 원본 html(수정 전 · 후)이 없으면 System Screen 항목을, 비교 분석 결과가 없으면 Processing 항목을 작성할 수 없으므로 작성 진행 불가
-- 파일명은 'KT_ERP_BTA_FD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc'으로 할 것
+- 파일명은 'KT_ERP_BTA_FD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}'으로 할 것
+- 파일확장자는 참고한 파일의 확장자를 따라감. doc또는 docx로 할 것.
 - {프로그램ID}·{프로그램명}·{모듈명}·{현재유저}의 정의와 도출 규칙은 AGENTS.md `## 프로그램 식별 정보` 참고
 - 하기의 '수정 세부 사항'을 참고하여 문서를 작성할 것.
 - 문서 업데이트 시 수정이력 Format을 지켜서 작성할 것. (표 내부는 색상 마킹 대상에서 제외하되 내용은 동일하게 수정함)
@@ -15,6 +16,7 @@
   {수정사항 입력}                  -> 글자색 검정색
   End of {현재일자} [{SR NO}]     -> 글자색 빨간색
 - 날짜는 yyyy.mm.dd 형식으로 작성할 것.
+- 표를 편집할 때는 윗 줄의 빈칸부터 채워서 작성할 것. 빈칸이 없을 경우에만 행을 추가해서 작성할 것.
 
 ### 필수사항
 - 항상 원본 문서의 복사본을 만들어 버전업 후 저장할 것.
@@ -27,12 +29,18 @@
 
 ## 편집 방법(.doc 파일)
 - 템플릿은 Microsoft Word 97-2003 문서(.doc, 바이너리 포맷)이므로 python-docx 등 OOXML(.docx) 기반 라이브러리로는 직접 편집 불가
-- 실행 환경(Windows + MS Word 설치됨)을 활용하여 pywin32(`win32com.client`)로 Word 애플리케이션을 직접 자동화하여 편집할 것
-  - Word 애플리케이션을 백그라운드로 실행(`Application.Visible = False`)한 뒤 대상 파일을 염 (`Documents.Open`)
+- **Python은 이 환경에서 사용 불가** — `python`은 Microsoft Store 스텁(exit 9009)이고 `pip` · `py` · `conda`가 없어 pywin32 등 어떤 라이브러리도 설치·실행 불가. Windows PowerShell 5.1 + Word COM(`New-Object -ComObject Word.Application`)만 사용할 것
+- 실행 환경(Windows + MS Word 설치됨)을 활용하여 Word COM으로 Word 애플리케이션을 직접 자동화하여 편집할 것
+  - Open 전 `DisplayAlerts = 0` · `AutomationSecurity = 3` · `Visible = $true` 설정 — 저장 시 뜨는 대화상자가 COM 자동화에서 응답받지 못해 무한 대기하는 것을 방지
   - 텍스트 삽입 · 수정은 Range/Find 객체로 수행
-  - 수정이력 Format의 색상 지정 시 RGB 값을 직접 계산하지 말고 `win32com.client.constants`의 `wdColorRed` · `wdColorBlack` 상수를 `Font.Color`에 사용할 것 (Word의 색상 값은 RGB 가 아닌 BGR 순서라 직접 계산 시 색이 뒤바뀔 수 있음)
-  - 저장 시 파일 형식을 반드시 원본과 동일한 Word 97-2003(`wdFormatDocument97`)으로 지정하여 `SaveAs`할 것 — 형식을 지정하지 않으면 다른 포맷(.docx 등)으로 저장될 수 있음
-  - 편집이 실패하더라도 Word 프로세스가 잔류하지 않도록 try/finally 구조로 문서 `Close`, 애플리케이션 `Quit`을 반드시 호출할 것
+  - 수정이력 Format의 색상 지정 시 RGB 값을 직접 계산하지 말고 Word 상수(`wdColorRed` = 255, `wdColorBlack` = 0)를 `Font.Color`에 사용할 것 (Word의 색상 값은 RGB 가 아닌 BGR 순서라 직접 계산 시 색이 뒤바뀔 수 있음)
+  - 저장 시 파일 형식을 반드시 원본과 동일한 Word 97-2003(`wdFormatDocument97` = 0)으로 지정하여 `SaveAs`할 것 — 형식을 지정하지 않으면 다른 포맷(.docx 등)으로 저장될 수 있음
+  - 편집 전에 무수정 복사본을 `.temp`에 SaveAs하는 사전 게이트(60초)를 통과한 경우에만 편집 진행 — 실패 시 편집 시도 금지
+  - 편집이 실패하더라도 Word 프로세스가 잔류하지 않도록 try/finally 구조로 문서 `Close`, 애플리케이션 `Quit` + `[GC]::Collect()`를 반드시 호출할 것
+- `.ps1` 스크립트는 ASCII 문자만 사용하고 한글 텍스트(파일명 · 내용)는 UTF-8 JSON 파일로 분리할 것 — 한글 주석 포함 시 UTF-8 BOM 문제(mojibake)로 경로 오류 발생
+- 대괄호 `[ ]`가 들어간 파일명은 `Copy-Item`/`Move-Item`에 `-LiteralPath`를 사용하고, .NET API는 `[IO.File]` 메서드를 사용할 것
+- zdown html 소스는 CP949(EUC-KR) 인코딩 — `[System.Text.Encoding]::GetEncoding(949)`로 디코딩 후 사용할 것
+- 산출물 4종 병렬 생성 시 Word COM 스크립트(FD · TD) 동시 실행 금지 — 실행 전 `Get-Process WINWORD` 잔류 0 확인 후 단독 실행
 
 ### ⚠️ HTML 파일 읽기 주의
 - zdown 소스 html 파일을 읽을 때 한꺼번에 많은 파일을 읽으면 오류 발생
@@ -126,7 +134,7 @@
 - 신규로 생성한 테이블이 있는 경우 기존 템플릿의 표 양식을 참고하여 작성. 수정이력 Format에 맞춰 작성할 것.
 
 ## 완료조건
-- 파일명 규칙('KT_ERP_BTA_FD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}.doc')을 준수한 산출물 파일이 `result/{SR NO}/` 폴더에 저장됨 (AGENTS.md `## 산출물 저장 위치` 참고)
+- 파일명 규칙('KT_ERP_BTA_FD_{프로그램ID}_[{모듈명}] {프로그램명}_{현재일자}')을 준수한 산출물 파일이 `result/{SR NO}/` 폴더에 저장됨 (AGENTS.md `## 산출물 저장 위치` 참고)
 - 1페이지(작성일자 · 작성팀 · 작성자), 2페이지 Document Management 표(Version · Date · Author · Comments), Functional Design 개요(Requested By · Req. Dev. Date · Prepared By · Developer)가 빠짐없이 채워짐
 - 수정 전후 차이가 있는 System Screen · Processing 항목이 수정이력 Format(색상 규칙)에 맞춰 작성됨
 - 신규 테이블이 있는 경우 New Table(CBO) 항목이 수정이력 Format(색상 규칙)에 맞춰 작성됨  
