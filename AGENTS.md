@@ -137,6 +137,8 @@ QA 테스터
       (`KT_ERP_BTA_FD_{프로그램ID}_...`)를 사용하되, 날짜 부분은 오늘 날짜가 아니라 그 문서가 마지막 저장된 날짜이므로 접두어(`KT_ERP_BTA_FD_{프로그램ID}`)만으로 식별하고 날짜까지 정확히 일치시켜 찾지 않음
   - 기존 TD 문서 (선택) : 있으면 TD 버전업 대상으로 사용, 없으면 `template` 폴더 기준으로 신규 작성
     - 파일명 규칙 : 기존 FD 문서와 동일한 방식 — `KT_ERP_BTA_TD_{프로그램ID}` 접두어로 식별 (날짜 불일치 무관)
+    - **확장자 규칙 : TD 버전업 대상은 `.doc`만 사용** — TD의 `.docx`는 DRM(RMS/IRM) 암호화 문서일 가능성이 높고(실제 사례: SRM26090988146), DRM 문서는 자동 저장이 구조적으로 불가하므로 `.docx` TD는 버전업 대상으로 사용하지 않음. `.docx`만 있고 `.doc`이 없으면 사용자에게 Word에서 '다른 이름으로 저장'으로 `.doc` 복제본(비암호화) 준비를 요청
+    - DRM 여부는 파일 첫 64KB를 UTF16LE로 디코딩해 `DRMEncrypted` 문자열 존재 여부로 판정 (`[System.Text.Encoding]::Unicode.GetString([IO.File]::ReadAllBytes($path)[0..65535]) -match 'DRMEncrypted'`)
 - `prep/{SR NO}/` 폴더에 zdown 수정 전 · 후 html이 없으면 SR 처리 진행 불가
 
 ## 템플릿 파일 취득
@@ -224,12 +226,22 @@ Word 파일 작성 시 `reference/td-guide.md`를 반드시 준수할 것.
 - [MED] Word Range.Text 에는 `.Replace([char]13, '')` 사용 불가 — null 문자 (\x0007) 가 섞여 있어 Replace 대상이 빈 문자열로 처리됨. `-replace` 연산자 사용. 출처: SRM26062606398 산출물 작성
 - [HIGH] HTML 파일 읽기 시 한꺼번에 많은 파일을 읽으면 오류 발생 — fewer batch 방식으로 나누어 읽을 것. 모든 HTML 파일을 완전히 읽은 후에만 산출물 작성을 시작할 것. 파일을 모두 읽지 않고 산출물 작성을 시작하면 차이점을 놓칠 수 있음. 출처: SRM26062606398 산출물 작성
 - [HIGH] Excel COM 자동화 후 반드시 Quit() + GC.Collect() 호출할 것 — PowerShell에서 `New-Object -ComObject Excel.Application`으로 엑셀을 생성한 후 `Quit()`과 `[GC]::Collect()`로 명시적으로 종료하지 않으면 백그라운드 프로세스가 살아남아 파일을 잠근다. 출처: SRM26072130592 FP내역서 생성
+- [HIGH] TD/FD 버전업 자동화(PowerShell + Word COM) 시 다음을 반드시 준수할 것:
+  1. **.ps1 파일은 UTF-8 with BOM으로 저장** — BOM 없는 UTF-8은 Windows PowerShell 5.1이 시스템 로케일(CP949 등)로 오인식해 스크립트에 포함된 한글 문자열(파일 경로 · 파일명 등)이 깨짐(mojibake). 깨진 문자에 Windows 경로에 쓸 수 없는 문자가 섞여 `Copy-Item` 등에서 "Illegal characters in path" 오류로 이어짐 (실제 사례: 파일명이 `KT_ERP_BTA_TD_ZSBFMBR0070_[FM]窯꾤츞 議곗젙 ?좎껌?...`처럼 깨짐)
+  2. **Python은 이 환경에서 사용 불가 — PowerShell + Office COM만 사용할 것** — 이 머신의 `python`은 Microsoft Store 스텁(exit 9009)이고 `pip` · `py` · `conda`가 없음. Pygments · pywin32 · openpyxl 등 어떤 Python 라이브러리도 설치·실행 불가. "Python 우선" 지침은 폐기됨. 출처: SRM26090988146 산출물 작성
+  3. **각 단계 실행 후 성공 여부를 확인하고 실패 시 즉시 중단** — `$ErrorActionPreference = 'Stop'` + try/catch 사용. `Copy-Item` 실패를 감지하지 못한 채 다음 단계(Word로 문서 열기)를 그대로 진행하면 존재하지 않거나 손상된 파일을 열어 빈 문서(0 paragraphs)가 만들어지는 등 실패가 연쇄되고, 이 상태로 재시도를 반복하면 무한루프로 이어짐
+  출처: SRM26072130592 TD 산출물 작성
 - [HIGH] zdown 수정 전후 HTML 파일 비교 시 다음 절차를 반드시 준수할 것:
   1. **전체 라인 수 먼저 확인** — BEFORE/AFTER 각 파일의 `<pre>`~`</pre>` 사이 순수 ABAP 코드(HTML 태그 제거, 빈 줄 제거 후) 라인 수를 비교. 라인 수가 다르면 라인 시프트 발생 가능성 100% → 단순 diff 결과만 믿지 말고 전체 로직 차이 확인 필요
   2. **라인 시프트 발생 시 수동 추출** — HTML 태그(`<font>`, `<br>`, 들여쓰기 등) 제거 후 빈 줄 제거해도 라인 수 다르면, BEFORE의 불필요한 빈 줄이 AFTER에 없어서 전체 라인이 밀림. 라인 번호가 무의미해지므로 diff 결과의 라인 번호를 믿지 말고, 실제 코드 변경이 시작된 지점(주석 `[U04]` 등)을 수동으로 찾아 변경 로직만 추출
   3. **메인 프로그램 헤더 주석 제외** — `{프로그램 ID}.html`(메인 프로그램)에서 `REPORT {프로그램 ID} MESSAGE-ID ...` 직전까지의 모든 주석/이력 표는 프로그램 수정 이력(Header)일 뿐, 실제 코드 변경 사항이 아님. 이 영역의 차이(수정 이력 표에 줄 추가 등)는 분석 결과에 포함하지 않음. 실제 코드 변경은 `REPORT` 선언부 이후만 확인
   4. **파일 전체 읽기** — zdown HTML 파일은 수만 라인에 달하므로 중간까지만 읽고 결론 내리지 말 것. 반드시 파일 끝까지 읽어서 전체 변경 범위 확인
   출처: SRM26072130592 소스 분석
+- [HIGH] zdown HTML은 CP949(EUC-KR) 인코딩 — PowerShell로 읽을 때 기본 인코딩(CP1252 등)으로 읽으면 한글 주석이 깨짐. 반드시 `[System.Text.Encoding]::GetEncoding(949)`로 디코딩 후 작업할 것. 출처: SRM26090988146 소스 분석
+- [HIGH] 소스 전후 비교에 커스텀 diff 도구(Myers 등) 직접 구현 금지 — `IndexOutOfRangeException` 등 자체 버그로 실패 이력 다수. diff 결과의 라인 번호도 라인 시프트 시 무의미. 대신 (1) 파일별 MD5 해시로 변경 파일 특정 (2) CP949 디코딩 (3) 수정 이력 마커(`[U03]` 등) 기준으로 변경 로직만 수동 추출. 출처: SRM26090988146 소스 분석
+- [HIGH] 산출물 4종 병렬 생성 시 Office COM 스크립트 동시 실행 금지 — WINWORD/EXCEL 프로세스·잠금 파일(~$*) 충돌로 저장 실패·손상 발생. Word 계열(FD·TD)과 Excel 계열(FP·테스트결과서)은 직렬 실행하거나, 실행 전 `Get-Process WINWORD,EXCEL` 잔류 0 확인 후 단독 실행할 것. 출처: SRM26090988146 산출물 작성
+- [HIGH] Word COM 저장(SaveAs/SaveAs2/SaveCopyAs)이 120초+ 무한 대기하는 문서 존재 — 확장자와 실제 포맷이 불일치(.docx인데 OLE 바이너리 D0 CF 11 E0)하거나 저장 시 대화상자가 뜨는 경우. Open 전 `DisplayAlerts=0` · `AutomationSecurity=3` · `Visible=$true` 적용, 편집 전 무수정 SaveAs 사전 게이트(60초)로 판정. 사전 게이트 실패 시 편집 시도 금지 — 손상본이 result에 남지 않게 원본 복사본 상태 유지. 출처: SRM26090988146 TD 산출물 작성
+- [HIGH] 사전 게이트(대화상자 차단 포함)로도 실패하는 문서는 DRM(RMS/IRM) 암호화 문서 — OLE 디렉터리 엔트리에 `DRMEncryptedDataSpace`·`DRMEncryptedTransform`·`EncryptedPackage` 스트림이 있으면 자동 저장이 구조적으로 불가(열람만 가능). PowerShell로 파일 첫 64KB를 UTF16LE로 스캔해 확인 가능. 이 판정 시 자동화 재시도 금지 — 사용자가 Word에서 '다른 이름으로 저장'으로 DRM 제거 복제본을 prep 폴더에 준비해야만 진행 가능. 출처: SRM26090988146 TD 산출물 작성 (4회 시도 전부 실패 후 원인 확정)
 
 ---
 
